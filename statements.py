@@ -66,6 +66,7 @@ class FactBase:
 
     def addBinary(self, pred, e1, e2):
         # love(John, Mary)
+        
         if pred not in self.fb:
             self.fb[pred] = {}
             if e1 not in self.fb[pred]:
@@ -75,6 +76,7 @@ class FactBase:
             self.fb[pred][e1] += [e2]
         else:
             self.fb[pred][e1][e2] = []
+
 
     def queryUnary(self, pred, e1):
         try:
@@ -114,7 +116,7 @@ def verb_stem(s):
     elif re.match(r"[A-z]+[^aeiou]ies\b", s):
         str = s[:-3] + 'y'
 
-    #If the stem is of the form Xie where X is a single letter other than a vowel, simply add s (dies, lies, ties — note that this doesn’t account for unties).
+    #If the stem is of the form Xie where X is a single letter other than a vowel, simply add s (dies, lies, ties — note that this doesnt account for unties).
     elif re.match(r"[^aeiou]ies\b", s):
         str = s[:-1]
 
@@ -204,15 +206,14 @@ if __name__ == "__main__":
     lx.add("likes","T")     #T
     print (lx.getAll("I"))
     print (lx.getAll("VBZ")) #error
-    """
+    
     fb = FactBase()
     fb.addUnary("duck","John")
     fb.addBinary("love","John","Mary")
     print (fb.queryUnary("duck","John"))            # returns True
     print (fb.queryBinary("love","Mary","John"))    # returns False    
-    
-    
-
+    print (fb.queryBinary("love","John", "Mary"))    # returns True 
+    """
     print((verb_stem("eats")))
     print((verb_stem("tells")))
     print((verb_stem("pays")))
