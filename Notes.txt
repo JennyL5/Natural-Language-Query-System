@@ -1,0 +1,6 @@
+Useful links for coursework and Python:
+
+Part A -
+https://docs.python.org/3/library/stdtypes.html#dict-views
+https://docs.python.org/2/library/re.html?fbclid=IwAR2OGE9TRF2zXIGBwk8C665bIttYY38bL4-3pw4L84Piit4xtpcPHzEdIJs
+

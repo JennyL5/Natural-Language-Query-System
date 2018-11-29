@@ -1,0 +1,11 @@
+Part E: Limitations of the system
+
+From your experience of playing with the completed system, you may discover features
+that you may feel could be confusing or misleading for users. In a plain text file
+improvements.txt, write a short paragraph explaining at least one way in which one
+might wish to improve the current system without introducing any major new extensions
+to the language it covers. Also explain whether you think such an improvement would
+be easy or difficult to implement, given the material you have learned in the course.
+Justify your answer.
+Greater credit will be given for points that are not simply superficial features of the
+implementation, but engage with the ideas covered by the course.

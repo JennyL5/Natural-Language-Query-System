@@ -58,7 +58,7 @@ def all_parses(wlist,lx):
 
 # For convenience, we reproduce the parameterized rules from the handout here:
 
-#    S      -> WHO QP[y] QM | WHICH Nom[#y] QP[y] QM
+#    S      -> WHO QP[y] QM | WHICH Nom[y] QP[y] QM
 #    QP[x]  -> VP[x] | DO[y] NP[y] T[p]
 #    VP[x]  -> I[x] | T[x] NP | BE[x] A | BE[x] NP[x] | VP[x] AND VP[x]
 #    NP[s]  -> P | AR Nom[s]
@@ -100,10 +100,7 @@ def V_phrase_num(tr):
         return tr[0][1]  # the s or p from Is,Ts or Ip,Tp
     elif (tr.label() == 'VP'):
         return V_phrase_num(tr[0])
-    elif (tr.label() == 'BE' or tr.label() == 'DO'):
-        return tr[0][-1]
-    
-     # add code here
+    elif  # add code here
 
 def matches(n1,n2):
     return (n1==n2 or n1=='' or n2=='')

@@ -31,11 +31,15 @@ class Lexicon:
             self.lx[cat] += [stem]
         else:
             self.lx[cat] += [stem]
+        """
+        for x in self.lx:
+            print (self.lx[x])
+        """
 
     def getAll(self, cat):
         """which returns all known word stems of a given category."""
         if cat in self.lx:
-            return (((self.lx[cat]))) #pront
+            return (list(set(self.lx[cat])))
         else:
             []
 
@@ -186,7 +190,7 @@ def process_statement (lx,wlist,fb):
 
 # Test
 if __name__ == "__main__":
-    """
+    
     lx = Lexicon()
     lx.add("John","P")      #P
     lx.add("Mary","P")      #P
@@ -194,18 +198,19 @@ if __name__ == "__main__":
     lx.add("student", "N")  #N
     lx.add("old", "A")      #A
     lx.add("fly", "I")      #I
+    lx.add("fly", "I")      #I
     lx.add("hit","T")       #T
     lx.add("hits","T")      #T
     lx.add("likes","T")     #T
-    print (lx.getAll("T"))
+    print (lx.getAll("I"))
     print (lx.getAll("VBZ")) #error
-
+    """
     fb = FactBase()
     fb.addUnary("duck","John")
     fb.addBinary("love","John","Mary")
     print (fb.queryUnary("duck","John"))            # returns True
     print (fb.queryBinary("love","Mary","John"))    # returns False    
-    """
+    
     
 
     print((verb_stem("eats")))
@@ -230,3 +235,4 @@ if __name__ == "__main__":
     print((verb_stem("hates"))) 
     print((verb_stem("unties"))) 
     print((verb_stem("says")))
+    """
