@@ -52,10 +52,52 @@ def unchanging_plurals():
                     noun_list.append(n_NNS_list[i]) 
                     break 
         
+        #for i in range(len(noun_list)):
+        #    print (noun_list[i])
+
         return list(set(noun_list))  
  
 
 unchanging_plurals_list = unchanging_plurals()
+
+def v_stem(s):
+
+    #If the stem is have, its 3s form is has.
+    if s == "has" :
+        return "have"
+
+    #If the stem ends in y preceded by a vowel, simply add s (pays, buys).
+    elif re.match(r"[A-z]+[aeiou][y]s\b", s):
+        str = s[:-1]
+
+    #If the stem ends in y preceded by a non-vowel and contains at least three letters, change the y to ies (flies, tries, unifies).
+    elif re.match(r"[A-z]+[^aeiou]ies\b", s):
+        str = s[:-3] + 'y'
+
+    #If the stem is of the form Xie where X is a single letter other than a vowel, simply add s (dies, lies, ties note that this doesnt account for unties).
+    elif re.match(r"[^aeiou]ies\b", s):
+        str = s[:-1]
+
+    #If the stem ends in o,x,ch,sh,ss or zz, add es (goes, boxes, attaches, washes, dresses, fizzes).
+    elif re.match(r"[A-z]+([ox]|[cs]h|[s]s|[z]z)es\b", s): 
+        str = s[:-2]
+
+    #If the stem ends in se or ze but not in sse or zze, add s (loses, dazes, lapses, analyses).
+    elif re.match(r"[A-z]+([s][^s][e]|[z][^z][e])s\b", s):
+        str = s[:-1]
+
+    #If the stem ends in e not preceded by i,o,s,x,z,ch,sh, just add s (likes, hates, bathes).
+    elif re.match(r"[A-z]+([^iosxz]|[^ch]|[^sh])es\b", s):
+        str = s[:-1]
+    
+    #If the stem ends in anything except s,x,y,z,ch,sh or a vowel, add s (eats, tells, shows)
+    elif re.match(r"[A-z]+([^sxyzaeiou]|[^cs]h)s\b", s):
+        str = s[:-1]
+
+    else: 
+        str = ""
+
+    return str
 
 
 def noun_stem (s):
@@ -63,15 +105,14 @@ def noun_stem (s):
     
     if s in unchanging_plurals_list:
         return s
-    elif s[:-3] == "men":
+    elif s[-3:] == "men":
         return s[:-3] + "man"
-    else:
-        # calls verb_stem from statements.py
-        try:
-            return verb_stem(s)
-        except KeyError:
-            return False
-
+    else: 
+        if v_stem(s) in unchanging_plurals_list: #calls helper function v_stem
+            return ""
+        else:
+            return v_stem(s)
+    
 
 def tag_word (lx,wd):
     """returns a list of all possible tags for wd relative to lx"""
@@ -82,10 +123,10 @@ def tag_word (lx,wd):
     tagset = ['P', 'N', 'A', 'I', 'T']
 
 
-    for tag in tagset:
-        s_tags += [tag for w in lx.getAll(tag) or [] if w == wd]
-        s_tags += [tag for v in lx.getAll(tag) or [] if v == verb_stem(wd)]
-        s_tags += [tag for n in lx.getAll(tag) or [] if n == noun_stem(wd)]
+    for x in tagset:
+        s_tags += [x for w in lx.getAll(x) or [] if w == wd]
+        s_tags += [x for v in lx.getAll(x) or [] if v == verb_stem(wd)]
+        s_tags += [x for n in lx.getAll(x) or [] if n == noun_stem(wd)]
 
     if wd in function_words:
         tags += [t for (w, t) in function_words_tags if w == wd]
@@ -143,6 +184,8 @@ if __name__ == "__main__":
     lx.add("orange", "N")
     lx.add("orange", "A")
    # lx.getAll("T")
+    print (noun_stem("sheeps"))
+    print (noun_stem("women"))
     print (tag_word(lx,"John")) # returns ["P"]
     print (tag_word(lx,"orange")) # returns ["Ns","A"]
     print (tag_word(lx,"fish")) # returns ["Ns","Np","Ip","Tp"]
