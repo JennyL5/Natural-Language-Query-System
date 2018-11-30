@@ -12,16 +12,6 @@
 
 from agreement import *
 
-""""
-Who is a duck?
-(\x. N_duck(x))
-Which orange duck likes a frog?
-(\x. ((A_orange(x) & N_duck(x)) &
-(exists y. (N_frog(y) & T_like(x,y))))
-Who does John like?
-15
-(\x. (exists y.((y=John) & T_like(y,x))))
-"""
 
 def sem(tr):
     """translates a syntax tree into a logical lambda expression (in string form)"""
@@ -35,48 +25,46 @@ def sem(tr):
     elif (tr.label() == 'I'):
         return '(\\x.' + tr[0][0] + '(x))'
     elif (tr.label() == 'T'):
-        return '(\\x.' + tr[0][0] + '(x))'
+        return '(\\x. \\y. ' + tr[0][0] + '(y) (x))'
     
     elif (rule == 'S -> WHO QP QM'):
-        return '(\\x.(' + sem(tr[1]) + '))' 
+        return '(\\x.(' + sem(tr[1]) + '(x)))' 
     elif (rule == 'S -> WHICH Nom QP QM'):
-        return '(\\x.(' + sem(tr[1]) & sem(tr[2]) + '))' 
+        return '(\\x.(' + sem(tr[1]) + '(x) & ' + sem(tr[2]) + '(x)))' 
     elif (rule == 'QP -> VP'):
-        return '(\\x.(' + sem(tr[0]) + '))' 
+        return '(\\x.(' + sem(tr[0]) + '(x)))' 
     elif (rule == 'QP -> DO NP T'): ########
-        return '(\\x.(' + sem(tr[1]) & sem(tr[2]) + '))'
+        return '(\\x.( exists y.( '+ (sem(tr[1])) +'(y) & ' + sem(tr[2]) + '(y,x))))'
     elif (rule == 'VP -> I'):
-        return '(\\x.(' + sem(tr[0]) + '))'
-    elif (rule == 'VP -> T NP'): ###############
-        return '(\\x.(' + sem(tr[0]) & sem(tr[1]) + '))'
+        return '(\\x.(' + sem(tr[0]) + '(x)))'
+    elif (rule == 'VP -> T NP'): #########
+        return '(\\x. (exists y. (' + sem(tr[1]) + '(y) &' + sem(tr[0]) + '(x, y))))' 
     elif (rule == 'VP -> BE A'):
-        return '(\\x.(' + sem(tr[1]) + '))'
+        return '(\\x.(' + sem(tr[1]) + '(x)))'
     elif (rule == 'VP -> BE NP'):
-        return '(\\x.(' + sem(tr[1]) + '))'
+        return '(\\x.(' + sem(tr[1]) + '(x)))'
     elif (rule == 'VP -> VP AND VP'):
-        return '(\\x.(' + sem(tr[0]) & sem(tr[2]) + '))'
+        return '(\\x.(' + sem(tr[0]) + ' (x) &' + sem(tr[2]) + '(x)))'
     elif (rule == 'NP -> P'):
-        return '(\\x.(x = ' + sem(tr[0]) + '))'
+        return '(\\x.(x = ' + sem(tr[0]) + '))' #!!!!
     elif (rule == 'NP -> AR Nom'):
-        return '(\\x.(' + sem(tr[1]) + '))'
+        return '(\\x.(' + sem(tr[1]) + '(x)))'
     elif (rule == 'NP -> Nom'):
-        return '(\\x.(x = ' + sem(tr[0]) + '))'
+        return '(\\x.( ' + sem(tr[0]) + '(x)))'
     elif (rule == 'Nom -> AN'):
-        return '(\\x.(x = ' + sem(tr[0]) + '))'
+        return '(\\x.( ' + sem(tr[0]) + '(x)))'
     elif (rule == 'AN -> A AN'):
-        return '(\\x.(' + sem(tr[0]) + '(x) & ' + sem(tr[1]) + '(x)))'
+        return '(\\x.(' + sem(tr[0]) + '(x) & ' + sem(tr[1]) + '(x)))'#!!!
     elif (rule == 'Nom -> AN Rel'):
-        return '(\\x.(x = ' + sem(tr[1]) + '))'
+        return '(\\x.( ' + sem(tr[1]) + '(x)))'
     elif (rule == 'AN -> N'):
-        return '(\\x.(x = ' + sem(tr[0]) + '))'
+        return '(\\x.(' + sem(tr[0]) + '(x)))'
     elif (rule == 'Rel -> WHO VP'):
-        return '(\\x.(x = ' + sem(tr[1]) + '))'
+        return '(\\x.( ' + sem(tr[1]) + '(x)))'
     elif (rule == 'Rel -> NP T'): ######################
-        return '(\\x.(x = ' + sem(tr[0]) & sem(tr[1]) + '))'
+        return '(\\x.(exists y.('+ sem(tr[0]) + '(y) & ' + sem(tr[1]) + '(y,x))))'
     else:
         return '(\\x.x)'
-
-   # elif (rule == 'N -> NS')
 
 
 
