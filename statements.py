@@ -31,10 +31,6 @@ class Lexicon:
             self.lx[cat] += [stem]
         else:
             self.lx[cat] += [stem]
-        """
-        for x in self.lx:
-            print (self.lx[x])
-        """
 
     def getAll(self, cat):
         """which returns all known word stems of a given category."""
