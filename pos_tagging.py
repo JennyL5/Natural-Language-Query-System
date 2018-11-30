@@ -122,7 +122,6 @@ def tag_word (lx,wd):
     tags = []
     tagset = ['P', 'N', 'A', 'I', 'T']
 
-
     for x in tagset:
         s_tags += [x for w in lx.getAll(x) or [] if w == wd]
         s_tags += [x for v in lx.getAll(x) or [] if v == verb_stem(wd)]
