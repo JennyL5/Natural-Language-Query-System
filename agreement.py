@@ -75,7 +75,7 @@ def label(t):
         return t[1]
     else:
         return t.label()
-s
+
 def top_level_rule(tr):
     if (isinstance(tr,str)):
         return ''
@@ -92,16 +92,16 @@ def N_phrase_num(tr):
     elif (tr.label() == 'Nom'):
         return N_phrase_num(tr[0])
     elif (tr.label() == 'NP'): #NP[s] -> P | AR  #Nom[s] #NP[p] -> Nom[p]
-        if (tr.label() == 'P'):
+        if (tr[0].label() == 'P'):
             return 's' 
-        elif (tr.label()== 'AR'):
-            return N_phrase_num(tr[1]) #NOM
-        elif (tr.label() == 'Nom'):
-            return N_phrase_num(tr[0])
+        elif (tr[0].label()== 'AR'):
+            return 's' #NOM
+        elif (tr[0].label() == 'Nom'):
+            return 'p'
     elif (tr.label() == 'AN'): #AN[x] -> N[x] | A AN[x]
-        if (tr.label()=='N'):
+        if (tr[0].label()=='N'):
             return N_phrase_num(tr[0])
-        elif (tr.label()=='A'):
+        elif (tr[0].label()=='A'):
             return N_phrase_num(tr[1]) #AN
     else:
         return ""
@@ -121,7 +121,7 @@ def V_phrase_num(tr):
     elif (tr.label() == 'Rel'): #Rel[x] -> WHO VP[x] | NP[y] T[y] 
         return V_phrase_num(tr[1])
     elif (tr.label() == 'QP'): #QP -> VP[x] 
-        if (tr.label() == 'VP' and len(tr)<=1):
+        if (tr[0].label() == 'VP' and len(tr)<=1):
             return V_phrase_num(tr[0])
     else:
         return ""
@@ -137,13 +137,12 @@ def check_node(tr):
     #only check constraints arising from RHS, LHS doesnt need to be checked (AN[x] -> N[x])
 
     rule = top_level_rule(tr)
-
     if (rule == 'S -> WHICH Nom QP QM'): #Nom #QP
         return (matches (N_phrase_num(tr[1]), V_phrase_num(tr[2])))
     elif (rule == 'NP -> AR Nom'): #Nom[s]
         return (N_phrase_num(tr[1]) == 's')
     elif (rule == 'QP -> DO NP T'): #DO #NP #T[p]
-        return ((matches(V_phrase_num(tr[0]), N_phrase_num(tr[1]))) and V_phrase_num(tr[2]) == 'P')
+        return ((matches(V_phrase_num(tr[0]), N_phrase_num(tr[1]))) and V_phrase_num(tr[2]) == 'p')
     elif (rule == 'VP -> BE NP'): #BE #NP
         return (matches(V_phrase_num(tr[0]), N_phrase_num(tr[1])))
     elif (rule == 'VP -> VP AND VP'): #VP #VP
@@ -203,7 +202,12 @@ def restore_words(tr,wds):
 
 if __name__ == "__main__":
     #code for a simple testing, feel free to modify
-    
+    """
+    lx = Lexicon()
+    lx.add('duck','N')
+    tr0 = all_parses(['Who','is','a', 'duck','?'], lx)
+    #print tr0
+    """
     lx = Lexicon()
     lx.add('John','P')
     lx.add('like','T')
