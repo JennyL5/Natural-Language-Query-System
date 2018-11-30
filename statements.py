@@ -38,10 +38,10 @@ class Lexicon:
 
     def getAll(self, cat):
         """which returns all known word stems of a given category."""
-        if cat in self.lx:
+        try:
             return (list(set(self.lx[cat])))
-        else:
-            []
+        except KeyError:
+            return []
 
     #"P" proper names (John, Mary)
     #"N" common nouns (duck, student)
@@ -94,19 +94,16 @@ class FactBase:
 
 import re
 from nltk.corpus import brown 
-b = brown.tagged_words()
-vb = [(w, t) for (w, t) in b if (t == "VB" or t == "VBZ")]
+
+b_list = brown.tagged_words()
+vb_list = [(w, t) for (w, t) in b_list if (t == "VB" or t == "VBZ")]
 
 def verb_stem(s):
     """extracts the stem from the 3sg form of a verb, or returns empty string"""
    
     #If the stem is have, its 3s form is has.
     if s == "has" :
-        str = "have"
-    
-    #If the stem ends in anything except s,x,y,z,ch,sh or a vowel, add s (eats, tells, shows)
-    elif re.match(r"[A-z]+([^sxyzaeiou]|[^cs]h)s\b", s):
-        str = s[:-1]
+        return "have"
 
     #If the stem ends in y preceded by a vowel, simply add s (pays, buys).
     elif re.match(r"[A-z]+[aeiou][y]s\b", s):
@@ -116,7 +113,7 @@ def verb_stem(s):
     elif re.match(r"[A-z]+[^aeiou]ies\b", s):
         str = s[:-3] + 'y'
 
-    #If the stem is of the form Xie where X is a single letter other than a vowel, simply add s (dies, lies, ties — note that this doesnt account for unties).
+    #If the stem is of the form Xie where X is a single letter other than a vowel, simply add s (dies, lies, ties note that this doesnt account for unties).
     elif re.match(r"[^aeiou]ies\b", s):
         str = s[:-1]
 
@@ -131,21 +128,27 @@ def verb_stem(s):
     #If the stem ends in e not preceded by i,o,s,x,z,ch,sh, just add s (likes, hates, bathes).
     elif re.match(r"[A-z]+([^iosxz]|[^ch]|[^sh])es\b", s):
         str = s[:-1]
+    
+    #If the stem ends in anything except s,x,y,z,ch,sh or a vowel, add s (eats, tells, shows)
+    elif re.match(r"[A-z]+([^sxyzaeiou]|[^cs]h)s\b", s):
+        str = s[:-1]
 
     else: 
         str = ""
 
 
-    hits  = [(w, t) for (w, t) in vb if (w == s or w == str)]
+    match  = [(w, t) for (w, t) in vb_list if (w == s or w == str)]
 
-    ts = [(w, t) for (w, t) in hits if w == s and t == 'VBZ']
+    t_s = [(w, t) for (w, t) in match if w == s and t == 'VBZ']
 
-    if ts:
+    if t_s == True:
         return str
     else:
-        tstr = [t for (w, t) in hits if w == str and t == 'VB']
-    if not (ts or tstr):
+        t_str = [t for (w, t) in match if w == str and t == 'VB']
+
+    if not (t_s or t_str):
         str = ""
+
     return str
    
 
@@ -192,7 +195,7 @@ def process_statement (lx,wlist,fb):
 
 # Test
 if __name__ == "__main__":
-    
+ 
     lx = Lexicon()
     lx.add("John","P")      #P
     lx.add("Mary","P")      #P
@@ -213,7 +216,7 @@ if __name__ == "__main__":
     print (fb.queryUnary("duck","John"))            # returns True
     print (fb.queryBinary("love","Mary","John"))    # returns False    
     print (fb.queryBinary("love","John", "Mary"))    # returns True 
-    """
+    
     print((verb_stem("eats")))
     print((verb_stem("tells")))
     print((verb_stem("pays")))
@@ -226,14 +229,14 @@ if __name__ == "__main__":
     print((verb_stem("goes")))
     print((verb_stem("attaches")))
     print((verb_stem("dresses")))
-    print((verb_stem("dazes")))   
-    print((verb_stem("analyses")))
+    print((verb_stem("dazes")))   #
+    print((verb_stem("analyses")))#
     print((verb_stem("loses")))
-    print((verb_stem("has"))) 
+    print((verb_stem("has"))) #have
     print((verb_stem("says")))
     print((verb_stem("likes")))
     print((verb_stem("bathes")))
     print((verb_stem("hates"))) 
-    print((verb_stem("unties"))) 
+    print((verb_stem("unties"))) #
     print((verb_stem("says")))
-    """
+    
