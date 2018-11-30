@@ -75,7 +75,7 @@ def label(t):
         return t[1]
     else:
         return t.label()
-
+s
 def top_level_rule(tr):
     if (isinstance(tr,str)):
         return ''
@@ -91,31 +91,70 @@ def N_phrase_num(tr):
         return tr[0][1]  # the s or p from Ns or Np
     elif (tr.label() == 'Nom'):
         return N_phrase_num(tr[0])
-    elif  # add code here
+    elif (tr.label() == 'NP'): #NP[s] -> P | AR  #Nom[s] #NP[p] -> Nom[p]
+        if (tr.label() == 'P'):
+            return 's' 
+        elif (tr.label()== 'AR'):
+            return N_phrase_num(tr[1]) #NOM
+        elif (tr.label() == 'Nom'):
+            return N_phrase_num(tr[0])
+    elif (tr.label() == 'AN'): #AN[x] -> N[x] | A AN[x]
+        if (tr.label()=='N'):
+            return N_phrase_num(tr[0])
+        elif (tr.label()=='A'):
+            return N_phrase_num(tr[1]) #AN
+    else:
+        return ""
+    
 
 def V_phrase_num(tr):
     """returns the number attribute of a verb-like tree, based on its head verb,
        or '' if this is undetermined."""
+    
+    # S, QP, VP, NP, Nom, AN, Rel
     if (tr.label() == 'T' or tr.label() == 'I'):
         return tr[0][1]  # the s or p from Is,Ts or Ip,Tp
     elif (tr.label() == 'VP'):
         return V_phrase_num(tr[0])
     elif (tr.label() == 'BE' or tr.label() == 'DO'):
-        return tr[0][-1]
+        return tr[0][-1] # the s or p from BEs, BEp or DOs, DOp
+    elif (tr.label() == 'Rel'): #Rel[x] -> WHO VP[x] | NP[y] T[y] 
+        return V_phrase_num(tr[1])
+    elif (tr.label() == 'QP'): #QP -> VP[x] 
+        if (tr.label() == 'VP' and len(tr)<=1):
+            return V_phrase_num(tr[0])
+    else:
+        return ""
     
-     # add code here
 
 def matches(n1,n2):
     return (n1==n2 or n1=='' or n2=='')
 
 def check_node(tr):
     """checks agreement constraints at the root of tr"""
+    
+    #S, QP, VP, NP, Nom, AN, Rel
+    #only check constraints arising from RHS, LHS doesnt need to be checked (AN[x] -> N[x])
+
     rule = top_level_rule(tr)
-    if (rule == 'S -> WHICH Nom QP QM'):
+
+    if (rule == 'S -> WHICH Nom QP QM'): #Nom #QP
         return (matches (N_phrase_num(tr[1]), V_phrase_num(tr[2])))
-    elif (rule == 'NP -> AR Nom'):
+    elif (rule == 'NP -> AR Nom'): #Nom[s]
         return (N_phrase_num(tr[1]) == 's')
-    elif  # add code here
+    elif (rule == 'QP -> DO NP T'): #DO #NP #T[p]
+        return ((matches(V_phrase_num(tr[0]), N_phrase_num(tr[1]))) and V_phrase_num(tr[2]) == 'P')
+    elif (rule == 'VP -> BE NP'): #BE #NP
+        return (matches(V_phrase_num(tr[0]), N_phrase_num(tr[1])))
+    elif (rule == 'VP -> VP AND VP'): #VP #VP
+        return (matches(V_phrase_num(tr[0]), V_phrase_num(tr[2])))
+    elif (rule == 'Nom -> AN Rel'): #AN #Rel
+        return (matches(V_phrase_num(tr[0]), V_phrase_num(tr[1])))
+    elif (rule == 'Rel -> NP T'): #NP #T
+        return (matches(N_phrase_num(tr[0]), V_phrase_num(tr[1])))
+    else:
+        return True
+
 
 def check_all_nodes(tr):
     """checks agreement constraints everywhere in tr"""
@@ -164,12 +203,13 @@ def restore_words(tr,wds):
 
 if __name__ == "__main__":
     #code for a simple testing, feel free to modify
+    
     lx = Lexicon()
     lx.add('John','P')
     lx.add('like','T')
     tr0 = all_valid_parses(lx, ['Who','likes','John','?'])[0]
     tr = restore_words(tr0,['Who','likes','John','?'])
     tr.draw()
-
+    
 # End of PART C.
 
