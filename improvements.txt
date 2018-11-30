@@ -1,11 +1,16 @@
 Part E: Limitations of the system
 
-From your experience of playing with the completed system, you may discover features
-that you may feel could be confusing or misleading for users. In a plain text file
-improvements.txt, write a short paragraph explaining at least one way in which one
-might wish to improve the current system without introducing any major new extensions
-to the language it covers. Also explain whether you think such an improvement would
-be easy or difficult to implement, given the material you have learned in the course.
-Justify your answer.
-Greater credit will be given for points that are not simply superficial features of the
-implementation, but engage with the ideas covered by the course.
+From my experience of playing with the completed system, I have discovered that the system
+does not handle sentences with complex sentence structures very well.  
+Modelling agreement is important to generate grammatically correct text in Natural Laguages.
+Agreement can be useful for resolving ambiguity. English has agreement, for example verbs agree 
+in person and number with their subjects. There should have a distinct meaning representation,
+for example duck for two meanings, hence the ambiguity in the statements. In addition, the rules in the 
+completed system does not capture all the different sentence structures in the English language. There
+should exist meaning representations for sentences with same meaning should be convertible into the same
+canonical form to show their equivalence. In addition, when running the complete system it does take some time, 
+this is because of some functions having to search through the Brown corpus containing approximately 1 million
+word tokens. And according to Zipf's law, there is a very small number of very common words, and there is a 
+very large amount of infrequent words. More than 40% of the word tokens are ambiguous. So with the 
+Hidden Markov models can find the tag sequence for a given word sequence. The Viterbi's algorithm canbe used to 
+efficiently find the most likely tag sequence by calculating the transition and emission probability.
