@@ -62,7 +62,7 @@ class FactBase:
             self.fb[pred] = []
             self.fb[pred] += [e1]
         else:
-            self.fb[pred] = []
+            self.fb[pred] += [e1]
 
     def addBinary(self, pred, e1, e2):
         # love(John, Mary)
@@ -137,16 +137,16 @@ def verb_stem(s):
         str = ""
 
 
-    match  = [(w, t) for (w, t) in vb_list if (w == s or w == str)]
+    matches  = [(w, t) for (w, t) in vb_list if (w == s or w == str)]
 
-    t_s = [(w, t) for (w, t) in match if w == s and t == 'VBZ']
+    tag_s = [(w, t) for (w, t) in matches if w == s and t == 'VBZ']
 
-    if t_s == True:
+    if tag_s == True:
         return str
     else:
-        t_str = [t for (w, t) in match if w == str and t == 'VB']
+        tag_str = [t for (w, t) in matches if w == str and t == 'VB']
 
-    if not (t_s or t_str):
+    if not (tag_s or tag_str):
         str = ""
 
     return str
